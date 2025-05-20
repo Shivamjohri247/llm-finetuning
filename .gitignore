@@ -29,3 +29,6 @@ htmlcov/
 .python-version
 .vscode/
 Thumbs.db
+# Ignore trained model checkpoints
+train/checkpoints/
+train/checkpoints/**
