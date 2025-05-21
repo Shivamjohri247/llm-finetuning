@@ -15,7 +15,8 @@ def clear_cuda_memory():
         torch.cuda.synchronize()
     gc.collect()
 
-MODEL_PATH = os.path.join(os.path.dirname(__file__), '../train/checkpoints')
+DEFAULT_MODEL_PATH = os.path.join(os.path.dirname(__file__), '../train/checkpoints')
+MODEL_PATH = os.environ.get("FINETUNED_MODEL_PATH", DEFAULT_MODEL_PATH)
 st.title("TinyLlama Inference (Streamlit)")
 
 # Initialize session state for model and tokenizer

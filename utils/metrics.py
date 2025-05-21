@@ -10,7 +10,7 @@ def compute_rouge(preds, refs):
     return [scorer.score(r, p) for r, p in zip(refs, preds)]
 
 def compute_bleu(preds, refs):
-    return sacrebleu.corpus_bleu(preds, [refs]).score
+    return sacrebleu.corpus_bleu(preds, [refs]) # Return the BLEUScore object
 
 def measure_latency(fn, *args, **kwargs):
     start = time.time()

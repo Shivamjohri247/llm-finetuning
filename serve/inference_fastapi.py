@@ -8,7 +8,8 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 import torch
 import os
 
-MODEL_PATH = os.path.join(os.path.dirname(__file__), '../train/checkpoints')
+DEFAULT_MODEL_PATH = os.path.join(os.path.dirname(__file__), '../train/checkpoints')
+MODEL_PATH = os.environ.get("FINETUNED_MODEL_PATH", DEFAULT_MODEL_PATH)
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
 model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
