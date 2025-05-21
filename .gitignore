@@ -1,20 +1,46 @@
+# Python artifacts
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+*.so
+*.egg
+
+# Virtual environment
 .venv/
+venv/
+ENV/
+env/
+pip-cache/
+
+# Output directories
+data/processed/
+train/checkpoints/
+optimize/onnx/
+results/
+offload/
+logs/
+
+# IDE specific
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# DS_Store
+.DS_Store
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Miscellaneous entries (some from original, some are common)
 *.onnx
 *.trt
 *.log
 .cache/
-venv/
-.env/
-.DS_Store
-.ipynb_checkpoints/
-# Add additional ignores for Python, packaging, and OS-specific files
-*.py[cod]
-*.egg-info/
-*.egg
-build/
-dist/
 *.manifest
 *.spec
 pip-log.txt
@@ -27,8 +53,5 @@ htmlcov/
 *.py,cover
 .hypothesis/
 .python-version
-.vscode/
 Thumbs.db
-# Ignore trained model checkpoints
-train/checkpoints/
-train/checkpoints/**
+```

@@ -8,7 +8,7 @@ import pandas as pd
 from transformers import AutoModelForCausalLM, AutoTokenizer, Trainer, TrainingArguments, DataCollatorForLanguageModeling
 import torch
 
-MODEL_NAME = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+# MODEL_NAME = "TinyLlama/TinyLlama-1.1B-Chat-v1.0" # Made configurable via args
 
 def load_jsonl(path):
     with open(path, 'r', encoding='utf-8') as f:
@@ -16,13 +16,13 @@ def load_jsonl(path):
 
 def main(args):
     os.makedirs(args.output, exist_ok=True)
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, token=os.environ.get("HF_TOKEN"))
+    tokenizer = AutoTokenizer.from_pretrained(args.model_name, token=os.environ.get("HF_TOKEN"))
     if tokenizer.pad_token is None:
         if tokenizer.eos_token is not None:
             tokenizer.pad_token = tokenizer.eos_token
         else:
             tokenizer.add_special_tokens({'pad_token': '[PAD]'})
-    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, token=os.environ.get("HF_TOKEN"))
+    model = AutoModelForCausalLM.from_pretrained(args.model_name, token=os.environ.get("HF_TOKEN"))
     data = load_jsonl(args.data)
     # Use pre-tokenized input_ids from JSONL
     input_ids = [item['input_ids'] for item in data]
@@ -51,7 +51,7 @@ def main(args):
         save_steps=100,
         logging_steps=10,
         report_to=[],
-        fp16=False,  # Disable fp16 for OOM safety
+        fp16=args.fp16,
     )
     data_collator = None  # Not needed, dataset already tokenized
     trainer = Trainer(
@@ -79,10 +79,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--data', type=str, help='Tokenized training data')
     parser.add_argument('--output', type=str, required=True, help='Output checkpoint directory')
+    parser.add_argument('--model_name', type=str, default='TinyLlama/TinyLlama-1.1B-Chat-v1.0', help='Model name for tokenizer and model')
     parser.add_argument('--epochs', type=int, default=3)
     parser.add_argument('--batch_size', type=int, default=1)  # Set default batch size to 1
     parser.add_argument('--lr', type=float, default=2e-5)
     parser.add_argument('--max_length', type=int, default=128)  # Set default max_length to 128
+    parser.add_argument('--fp16', action='store_true', help='Enable fp16 training')
     parser.add_argument('--test', action='store_true', help='Test the fine-tuned model')
     parser.add_argument('--input_text', type=str, default=None, help='Input text for testing')
     args = parser.parse_args()

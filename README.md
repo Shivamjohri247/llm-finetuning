@@ -14,18 +14,26 @@ A streamlined pipeline for fine-tuning small language models (primarily TinyLlam
 ## Project Structure
 ```
 .
+├── .github/              # GitHub Actions workflows (e.g., Pylint)
 ├── data/
-│   ├── preprocess.py      # Data preprocessing and tokenization
-│   └── processed/         # Processed and tokenized data
+│   ├── preprocess.py     # Data preprocessing and tokenization script
+│   └── processed/        # Default output for processed data (content ignored by .gitignore)
 ├── train/
 │   ├── train.py          # Model fine-tuning script
-│   └── checkpoints/      # Saved model checkpoints
+│   └── checkpoints/      # Default output for model checkpoints (content ignored by .gitignore)
+├── optimize/
+│   └── export_onnx.py    # Script to export model to ONNX
 ├── serve/
-│   ├── inference_fastapi.py  # FastAPI inference server
-│   └── inference_streamlit.py # Streamlit UI
-└── utils/
-    ├── benchmark.py      # Performance benchmarking
-    └── metrics.py        # Evaluation metrics
+│   ├── inference_fastapi.py # FastAPI inference server
+│   └── inference_streamlit.py # Streamlit UI for inference
+├── utils/
+│   ├── benchmark.py      # Performance benchmarking (example)
+│   └── metrics.py        # Evaluation metrics (example)
+├── tests/                # Unit tests (recommended, structure may vary)
+├── .gitignore            # Specifies intentionally untracked files by Git
+├── README.md             # This file
+├── requirements.txt      # Project dependencies
+└── setup.sh              # Environment setup script (creates venv, installs deps)
 ```
 
 ## Requirements
@@ -40,7 +48,9 @@ A streamlined pipeline for fine-tuning small language models (primarily TinyLlam
   streamlit
   torch
   accelerate
+  optimum[onnxruntime] # For ONNX export
   ```
+- **HF_TOKEN**: Ensure you have the `HF_TOKEN` environment variable set if you are using models that require authentication from the Hugging Face Hub (e.g., private models or some Llama variants).
 
 ## Installation
 ```bash
@@ -67,17 +77,22 @@ python data/preprocess.py \
 python train/train.py \
   --data data/processed/tokenized_data.jsonl \
   --output train/checkpoints/ \
+  --model_name TinyLlama/TinyLlama-1.1B-Chat-v1.0 \
   --epochs 3 \
   --batch_size 1 \
   --lr 2e-5 \
-  --max_length 128
+  --max_length 128 \
+  # --fp16  # Uncomment to enable mixed-precision training if desired
 ```
 Key Parameters:
-- `batch_size`: Default 1 for 8GB GPUs
-- `max_length`: 128 tokens recommended for memory efficiency
-- `fp16`: Disabled by default for stability
+- `model_name`: Identifier for the Hugging Face model to use (default: `TinyLlama/TinyLlama-1.1B-Chat-v1.0`).
+- `batch_size`: Default 1 for 8GB GPUs.
+- `max_length`: 128 tokens recommended for memory efficiency.
+- `fp16`: Optional flag to enable fp16 mixed-precision training (e.g., add `--fp16`). If not provided, training is in full precision (fp32).
 
 ### 3. Model Serving
+
+**Note on Model Path:** The serving scripts (`inference_fastapi.py` and `inference_streamlit.py`) load the fine-tuned model from the path specified by the `FINETUNED_MODEL_PATH` environment variable. If this variable is not set, they default to looking for the model in `train/checkpoints/` (relative to the project root, assuming scripts are run from there or the path resolves correctly).
 
 #### Option A: FastAPI Server
 ```bash

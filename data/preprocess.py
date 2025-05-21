@@ -20,7 +20,7 @@ def main(args):
     os.makedirs(args.output, exist_ok=True)
     # Always use the correct model/tokenizer for preprocessing
     tokenizer = AutoTokenizer.from_pretrained(
-        args.model_name if hasattr(args, 'model_name') else 'meta-llama/Llama-3.2-1B-Instruct',
+        args.model_name,
         token=os.environ.get("HF_TOKEN")
     )
     # Ensure pad_token is set (match training script)

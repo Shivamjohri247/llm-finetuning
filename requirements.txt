@@ -1,6 +1,7 @@
-transformers
-fastapi
+transformers==4.52.1
+fastapi==0.115.12
 uvicorn
 streamlit
 torch
 accelerate
+optimum[onnxruntime]
